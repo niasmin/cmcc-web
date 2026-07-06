@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CMCC | เรียนรู้ ดูแล ส่งต่อ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#20302B;
+    --ink-soft:#4B5D56;
+    --cream:#F7F2E7;
+    --cream-2:#EFE8D8;
+    --sage:#4F7268;
+    --sage-deep:#365049;
+    --sage-light:#DCE7DE;
+    --amber:#E3963E;
+    --amber-deep:#C97A28;
+    --line:rgba(32,48,43,0.14);
+    --radius:22px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Noto Sans Thai', sans-serif;
+    font-weight:400;
+    line-height:1.65;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,h4{
+    font-family:'Noto Serif Thai', serif;
+    color:var(--ink);
+    line-height:1.28;
+    font-weight:600;
+  }
+  .mono{font-family:'JetBrains Mono', monospace; letter-spacing:0.02em;}
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%;}
+  .wrap{max-width:1140px; margin:0 auto; padding:0 28px;}
+  button{font-family:inherit; cursor:pointer; border:none;}
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(247,242,231,0.92);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 28px; max-width:1140px; margin:0 auto;
+  }
+  .brand{display:flex; align-items:center; gap:10px; font-family:'Noto Serif Thai',serif; font-weight:700; font-size:1.2rem;}
+  .brand-mark{
+    width:34px; height:34px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, var(--amber), var(--sage) 70%);
+    flex-shrink:0;
+  }
+  nav.tabs{display:flex; gap:4px; background:var(--sage-light); padding:5px; border-radius:100px;}
+  nav.tabs button{
+    padding:9px 18px; border-radius:100px; font-size:0.92rem; font-weight:500;
+    color:var(--ink-soft); background:transparent; transition:all .25s ease;
+    white-space:nowrap;
+  }
+  nav.tabs button.active{background:var(--sage); color:#fff;}
+  .nav-cta{display:none;}
+  @media (min-width:860px){ .nav-cta{display:inline-flex;} }
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:12px 24px; border-radius:100px; font-weight:600; font-size:0.94rem;
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .btn-amber{background:var(--amber); color:#241605;}
+  .btn-amber:hover{transform:translateY(-2px); box-shadow:0 10px 24px -8px rgba(227,150,62,0.6);}
+  .btn-sage{background:var(--sage); color:#fff;}
+  .btn-sage:hover{transform:translateY(-2px); box-shadow:0 10px 24px -8px rgba(79,114,104,0.55);}
+  .btn-outline{background:transparent; border:1.5px solid var(--sage); color:var(--sage-deep);}
+  .btn-outline:hover{background:var(--sage-light);}
+
+  section{display:none;}
+  section.active{display:block; animation:fade .5s ease;}
+  @keyframes fade{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
+
+  /* ---------- HERO ---------- */
+  .hero{position:relative; padding:88px 0 70px; overflow:hidden;}
+  .ripples{position:absolute; inset:0; z-index:0; pointer-events:none;}
+  .ripple{
+    position:absolute; border-radius:50%; border:1.5px solid var(--sage);
+    opacity:0.18; animation:expand 7s ease-out infinite;
+  }
+  .ripple:nth-child(2){animation-delay:2.3s; border-color:var(--amber);}
+  .ripple:nth-child(3){animation-delay:4.6s;}
+  @keyframes expand{
+    0%{width:40px; height:40px; opacity:0.35;}
+    100%{width:640px; height:640px; opacity:0;}
+  }
+  @media (prefers-reduced-motion: reduce){ .ripple{animation:none; display:none;} }
+  .hero-grid{position:relative; z-index:1; display:grid; gap:48px;}
+  @media (min-width:900px){ .hero-grid{grid-template-columns:1.1fr 0.9fr; align-items:center;} }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'JetBrains Mono',monospace; font-size:0.78rem; letter-spacing:0.06em;
+    color:var(--sage-deep); background:var(--sage-light); padding:6px 14px; border-radius:100px;
+    margin-bottom:22px;
+  }
+  .hero h1{font-size:clamp(2.1rem, 4.2vw, 3.3rem); margin-bottom:20px;}
+  .hero h1 em{font-style:normal; color:var(--sage);}
+  .hero p.lead{font-size:1.08rem; color:var(--ink-soft); max-width:520px; margin-bottom:32px;}
+  .hero-actions{display:flex; flex-wrap:wrap; gap:14px;}
+  .hero-visual{position:relative; aspect-ratio:1/1; max-width:420px; margin:0 auto;}
+  .orbit{position:absolute; inset:0; border-radius:50%; border:1.5px dashed var(--line);}
+  .orbit-2{inset:14%; border-color:var(--line);}
+  .pillar-node{
+    position:absolute; background:#fff; border-radius:18px; padding:16px 18px;
+    box-shadow:0 14px 34px -12px rgba(32,48,43,0.22); width:168px;
+    border:1px solid var(--line);
+  }
+  .pillar-node .num{font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:var(--sage-deep); font-weight:600;}
+  .pillar-node h4{font-size:0.98rem; margin:4px 0 2px;}
+  .pillar-node p{font-size:0.8rem; color:var(--ink-soft);}
+  .node-1{top:-14px; left:0;}
+  .node-2{top:38%; right:-30px;}
+  .node-3{bottom:-10px; left:8%;}
+  .center-mark{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:64px; height:64px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, var(--amber), var(--sage) 75%);
+    box-shadow:0 0 0 10px rgba(79,114,104,0.08);
+  }
+
+  /* ---------- STAT STRIP ---------- */
+  .stats{border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--cream-2);}
+  .stats-inner{display:grid; grid-template-columns:repeat(2,1fr); gap:28px; padding:36px 0;}
+  @media (min-width:760px){ .stats-inner{grid-template-columns:repeat(4,1fr);} }
+  .stat b{display:block; font-family:'JetBrains Mono',monospace; font-size:1.9rem; color:var(--sage-deep); font-weight:600;}
+  .stat span{font-size:0.86rem; color:var(--ink-soft);}
+
+  /* ---------- SECTION HEADERS ---------- */
+  .section-pad{padding:76px 0;}
+  .section-head{max-width:640px; margin-bottom:44px;}
+  .section-head .eyebrow{margin-bottom:16px;}
+  .section-head h2{font-size:clamp(1.7rem,3vw,2.3rem); margin-bottom:12px;}
+  .section-head p{color:var(--ink-soft); font-size:1.02rem;}
+
+  /* ---------- PILLARS (home) ---------- */
+  .pillars{display:grid; gap:22px;}
+  @media (min-width:820px){ .pillars{grid-template-columns:repeat(3,1fr);} }
+  .pillar-card{
+    background:#fff; border:1px solid var(--line); border-radius:var(--radius);
+    padding:30px 26px; position:relative; overflow:hidden;
+  }
+  .pillar-card::before{
+    content:''; position:absolute; top:-40px; right:-40px; width:120px; height:120px;
+    border-radius:50%; background:var(--sage-light); opacity:0.7;
+  }
+  .pillar-card .icon-blob{
+    width:52px; height:52px; border-radius:16px 16px 16px 4px;
+    background:var(--sage); display:flex; align-items:center; justify-content:center;
+    color:#fff; font-size:1.3rem; margin-bottom:20px; position:relative; z-index:1;
+  }
+  .pillar-card.amber .icon-blob{background:var(--amber); color:#241605;}
+  .pillar-card h3{font-size:1.2rem; margin-bottom:10px; position:relative; z-index:1;}
+  .pillar-card p{color:var(--ink-soft); font-size:0.94rem; margin-bottom:18px; position:relative; z-index:1;}
+  .pillar-card .link{color:var(--sage-deep); font-weight:600; font-size:0.9rem; position:relative; z-index:1;}
+
+  /* ---------- COURSES ---------- */
+  .course-list{display:flex; flex-direction:column; border-top:1px solid var(--line);}
+  .course-row{
+    display:grid; grid-template-columns:64px 1fr auto; gap:20px; align-items:center;
+    padding:22px 4px; border-bottom:1px solid var(--line); transition:background .2s ease;
+  }
+  .course-row:hover{background:var(--cream-2);}
+  .course-num{font-family:'JetBrains Mono',monospace; font-size:1.5rem; color:var(--sage); font-weight:600;}
+  .course-body h4{font-size:1.06rem; margin-bottom:4px; font-family:'Noto Sans Thai',sans-serif; font-weight:600; color:var(--ink);}
+  .course-body p{font-size:0.88rem; color:var(--ink-soft);}
+  .course-tags{display:flex; gap:6px; margin-top:8px; flex-wrap:wrap;}
+  .tag{font-size:0.72rem; background:var(--sage-light); color:var(--sage-deep); padding:3px 10px; border-radius:100px; font-family:'JetBrains Mono',monospace;}
+  .course-cta{font-size:0.86rem; font-weight:600; color:var(--amber-deep); white-space:nowrap;}
+  @media (max-width:640px){
+    .course-row{grid-template-columns:40px 1fr; row-gap:10px;}
+    .course-cta{grid-column:2; justify-self:start;}
+  }
+
+  /* ---------- FIND CAREGIVER ---------- */
+  .split{display:grid; gap:44px;}
+  @media (min-width:900px){ .split{grid-template-columns:0.9fr 1.1fr;} }
+  .info-card{background:var(--sage-deep); color:#fff; border-radius:var(--radius); padding:34px;}
+  .info-card h3{color:#fff; font-size:1.3rem; margin-bottom:14px;}
+  .info-card p{color:rgba(255,255,255,0.82); font-size:0.94rem; margin-bottom:22px;}
+  .step-item{display:flex; gap:14px; margin-bottom:18px;}
+  .step-item .step-num{
+    font-family:'JetBrains Mono',monospace; font-size:0.85rem; font-weight:600;
+    width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.15);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .step-item h5{color:#fff; font-size:0.95rem; margin-bottom:2px; font-family:'Noto Sans Thai',sans-serif; font-weight:600;}
+  .step-item p{color:rgba(255,255,255,0.75); font-size:0.86rem; margin-bottom:0;}
+
+  form{background:#fff; border:1px solid var(--line); border-radius:var(--radius); padding:32px;}
+  .field{margin-bottom:20px;}
+  .field label{display:block; font-size:0.86rem; font-weight:600; margin-bottom:8px; color:var(--ink);}
+  .field .hint{font-size:0.78rem; color:var(--ink-soft); font-weight:400; margin-left:6px;}
+  .field input, .field select, .field textarea{
+    width:100%; padding:12px 14px; border:1.4px solid var(--line); border-radius:12px;
+    font-family:'Noto Sans Thai',sans-serif; font-size:0.94rem; background:var(--cream);
+    color:var(--ink); transition:border-color .2s ease;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{
+    outline:none; border-color:var(--sage);
+  }
+  .row-2{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media (max-width:560px){ .row-2{grid-template-columns:1fr;} }
+  .chip-group{display:flex; flex-wrap:wrap; gap:8px;}
+  .chip{
+    padding:9px 16px; border-radius:100px; border:1.4px solid var(--line); font-size:0.86rem;
+    background:var(--cream); color:var(--ink-soft); transition:all .2s ease;
+  }
+  .chip.selected{background:var(--sage); color:#fff; border-color:var(--sage);}
+  .submit-row{display:flex; align-items:center; gap:16px; margin-top:8px;}
+  .success-msg{
+    display:none; align-items:center; gap:10px; background:var(--sage-light); color:var(--sage-deep);
+    padding:12px 16px; border-radius:12px; font-size:0.88rem; font-weight:500; margin-top:16px;
+  }
+  .success-msg.show{display:flex;}
+
+  /* ---------- PARTNER ---------- */
+  .benefit-grid{display:grid; gap:16px; margin-bottom:8px;}
+  @media (min-width:700px){ .benefit-grid{grid-template-columns:repeat(2,1fr);} }
+  .benefit{display:flex; gap:14px; background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px 20px;}
+  .benefit .dot{width:10px; height:10px; border-radius:50%; background:var(--amber); margin-top:6px; flex-shrink:0;}
+  .benefit h5{font-size:0.96rem; margin-bottom:4px; font-family:'Noto Sans Thai',sans-serif; font-weight:600;}
+  .benefit p{font-size:0.84rem; color:var(--ink-soft);}
+
+  .upload-box{
+    border:1.6px dashed var(--line); border-radius:14px; padding:22px; text-align:center;
+    color:var(--ink-soft); font-size:0.86rem; background:var(--cream);
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{background:var(--ink); color:rgba(255,255,255,0.7); padding:52px 0 30px; margin-top:40px;}
+  .footer-grid{display:grid; gap:32px;}
+  @media (min-width:760px){ .footer-grid{grid-template-columns:1.4fr 1fr 1fr;} }
+  footer h4{color:#fff; font-size:0.98rem; margin-bottom:14px; font-family:'Noto Sans Thai',sans-serif; font-weight:600;}
+  footer .fbrand{display:flex; align-items:center; gap:10px; margin-bottom:12px;}
+  footer p, footer a{font-size:0.86rem; line-height:2;}
+  .footer-bottom{border-top:1px solid rgba(255,255,255,0.12); margin-top:36px; padding-top:20px; font-size:0.78rem; color:rgba(255,255,255,0.45); font-family:'JetBrains Mono',monospace;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav-inner">
+    <div class="brand"><span class="brand-mark"></span>CMCC</div>
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="home">หน้าแรก</button>
+      <button class="tab-btn" data-tab="courses">คอร์สเรียน</button>
+      <button class="tab-btn" data-tab="find">หาผู้ดูแล</button>
+      <button class="tab-btn" data-tab="partner">ร่วมงานกับเรา</button>
+    </nav>
+    <a href="#" class="btn btn-amber nav-cta" onclick="showTab('find'); return false;">ต้องการผู้ดูแล →</a>
+  </div>
+</header>
+
+<!-- ============ HOME ============ -->
+<section id="home" class="active">
+  <div class="hero">
+    <div class="ripples">
+      <div class="ripple" style="top:20%; left:8%;"></div>
+      <div class="ripple" style="top:55%; left:60%;"></div>
+      <div class="ripple" style="top:10%; left:70%;"></div>
+    </div>
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow">● เพื่อนคู่คิดเรื่องการดูแล</div>
+        <h1>เรียนรู้การดูแล<br>ส่งต่อด้วย<em>ความอุ่นใจ</em></h1>
+        <p class="lead">คอร์สออนไลน์การดูแลผู้สูงอายุและผู้ป่วยตามบ้าน จากผู้เชี่ยวชาญ พร้อมระบบจับคู่ผู้ดูแลที่ผ่านการอบรมจริง ให้ทุกครอบครัววางใจได้</p>
+        <div class="hero-actions">
+          <a href="#" class="btn btn-sage" onclick="showTab('courses'); return false;">ดูคอร์สเรียนทั้งหมด</a>
+          <a href="#" class="btn btn-outline" onclick="showTab('partner'); return false;">สมัครเป็นผู้ดูแล</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="orbit"></div>
+        <div class="orbit orbit-2"></div>
+        <div class="center-mark"></div>
+        <div class="pillar-node node-1"><div class="num">01 / เรียน</div><h4>คอร์สอบรม</h4><p>10 หลักสูตรมาตรฐาน</p></div>
+        <div class="pillar-node node-2"><div class="num">02 / จับคู่</div><h4>ส่งต่อผู้ดูแล</h4><p>ตรงตามความต้องการ</p></div>
+        <div class="pillar-node node-3"><div class="num">03 / ร่วมงาน</div><h4>เป็นพาร์ตเนอร์</h4><p>สร้างรายได้ยั่งยืน</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="wrap stats-inner">
+      <div class="stat"><b>10</b><span>หลักสูตรอบรม</span></div>
+      <div class="stat"><b>500+</b><span>ผู้ดูแลที่ผ่านการอบรม</span></div>
+      <div class="stat"><b>1,200+</b><span>ครอบครัวที่ได้รับการดูแล</span></div>
+      <div class="stat"><b>4.8/5</b><span>คะแนนความพึงพอใจ</span></div>
+    </div>
+  </div>
+
+  <div class="wrap section-pad">
+    <div class="section-head">
+      <div class="eyebrow">สิ่งที่เราทำ</div>
+      <h2>ครบทั้งเรียน ดูแล และร่วมงาน</h2>
+      <p>สามเสาหลักที่เชื่อมโยงกัน — ตั้งแต่การอบรมผู้ดูแลให้มีมาตรฐาน ไปจนถึงการส่งต่อบริการให้ครอบครัวที่ต้องการ</p>
+    </div>
+    <div class="pillars">
+      <div class="pillar-card">
+        <div class="icon-blob">✎</div>
+        <h3>คอร์สออนไลน์ 10 หลักสูตร</h3>
+        <p>เรียนได้ทุกที่ ทุกเวลา พร้อมใบรับรองหลังจบคอร์ส ครอบคลุมตั้งแต่พื้นฐานถึงการดูแลผู้ป่วยเฉพาะทาง</p>
+        <a href="#" class="link" onclick="showTab('courses'); return false;">ดูรายวิชา →</a>
+      </div>
+      <div class="pillar-card amber">
+        <div class="icon-blob">⌂</div>
+        <h3>จับคู่ผู้ดูแลตามบ้าน</h3>
+        <p>บอกความต้องการของครอบครัว เราคัดผู้ดูแลที่ผ่านการอบรมและตรวจสอบประวัติให้ตรงกับเคสของคุณ</p>
+        <a href="#" class="link" onclick="showTab('find'); return false;">หาผู้ดูแล →</a>
+      </div>
+      <div class="pillar-card">
+        <div class="icon-blob">✓</div>
+        <h3>ร่วมงานเป็นพาร์ตเนอร์</h3>
+        <p>สมัครเป็นผู้ดูแลในเครือข่ายของเรา รับงานต่อเนื่อง พร้อมโอกาสพัฒนาทักษะอย่างมืออาชีพ</p>
+        <a href="#" class="link" onclick="showTab('partner'); return false;">สมัครเลย →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ COURSES ============ -->
+<section id="courses">
+  <div class="wrap section-pad">
+    <div class="section-head">
+      <div class="eyebrow">หลักสูตรอบรม</div>
+      <h2>10 คอร์สเรียนสำหรับผู้ดูแลมืออาชีพ</h2>
+      <p>ออกแบบเป็นลำดับการเรียนรู้ ตั้งแต่พื้นฐานไปจนถึงทักษะเฉพาะทาง แต่ละคอร์สมีวิดีโอ แบบทดสอบ และใบรับรอง</p>
+    </div>
+    <div class="course-list" id="courseList"></div>
+  </div>
+</section>
+
+<!-- ============ FIND CAREGIVER ============ -->
+<section id="find">
+  <div class="wrap section-pad">
+    <div class="section-head">
+      <div class="eyebrow">สำหรับครอบครัว</div>
+      <h2>หาผู้ดูแลที่ไว้ใจได้</h2>
+      <p>กรอกความต้องการของคุณ ทีมงานจะจับคู่ผู้ดูแลที่ผ่านการอบรมและเหมาะกับเคสของครอบครัวคุณภายใน 24 ชั่วโมง</p>
+    </div>
+    <div class="split">
+      <div class="info-card">
+        <h3>ขั้นตอนการจับคู่</h3>
+        <p>ไม่ซับซ้อน ไม่มีค่าใช้จ่ายในการลงทะเบียนหาผู้ดูแล</p>
+        <div class="step-item"><div class="step-num">1</div><div><h5>กรอกแบบฟอร์ม</h5><p>บอกอาการ ความต้องการ และช่วงเวลา</p></div></div>
+        <div class="step-item"><div class="step-num">2</div><div><h5>ทีมงานคัดเลือก</h5><p>เลือกผู้ดูแลที่ผ่านการอบรมตรงกับเคส</p></div></div>
+        <div class="step-item"><div class="step-num">3</div><div><h5>นัดพบและเริ่มดูแล</h5><p>ยืนยันตารางเวลาและเริ่มการดูแล</p></div></div>
+      </div>
+      <form id="findForm">
+        <div class="row-2">
+          <div class="field"><label>ชื่อผู้ติดต่อ</label><input type="text" placeholder="เช่น คุณสมหญิง" required></div>
+          <div class="field"><label>เบอร์โทรศัพท์</label><input type="tel" placeholder="08x-xxx-xxxx" required></div>
+        </div>
+        <div class="field">
+          <label>ประเภทการดูแลที่ต้องการ</label>
+          <div class="chip-group" id="careTypeChips">
+            <div class="chip" data-val="ผู้สูงอายุทั่วไป">ผู้สูงอายุทั่วไป</div>
+            <div class="chip" data-val="ผู้ป่วยติดเตียง">ผู้ป่วยติดเตียง</div>
+            <div class="chip" data-val="ผู้ป่วยหลังผ่าตัด">ผู้ป่วยหลังผ่าตัด</div>
+            <div class="chip" data-val="ผู้ป่วยสมองเสื่อม">ผู้ป่วยสมองเสื่อม</div>
+            <div class="chip" data-val="ดูแลรายวัน/ชั่วคราว">ดูแลรายวัน/ชั่วคราว</div>
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="field"><label>พื้นที่ให้บริการ</label><input type="text" placeholder="เขต/จังหวัด" required></div>
+          <div class="field"><label>รูปแบบเวลา</label>
+            <select><option>ประจำ (อยู่ประจำ)</option><option>รายวัน</option><option>เฉพาะกลางวัน</option><option>เฉพาะกลางคืน</option></select>
+          </div>
+        </div>
+        <div class="field"><label>รายละเอียดเพิ่มเติม <span class="hint">(อาการ, งบประมาณ, ข้อกังวล)</span></label>
+          <textarea rows="3" placeholder="เล่าให้เราฟังเพิ่มเติม..."></textarea>
+        </div>
+        <div class="submit-row">
+          <button type="submit" class="btn btn-amber">ส่งคำขอหาผู้ดูแล</button>
+        </div>
+        <div class="success-msg" id="findSuccess">✓ รับคำขอแล้ว ทีมงานจะติดต่อกลับภายใน 24 ชั่วโมง</div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PARTNER ============ -->
+<section id="partner">
+  <div class="wrap section-pad">
+    <div class="section-head">
+      <div class="eyebrow">สำหรับผู้ดูแล</div>
+      <h2>สมัครเป็นพาร์ตเนอร์ผู้ดูแล</h2>
+      <p>ร่วมเครือข่ายผู้ดูแลของ CMCC รับงานต่อเนื่องจากครอบครัวที่ไว้วางใจ พร้อมพัฒนาทักษะผ่านคอร์สอบรมของเรา</p>
+    </div>
+
+    <div class="benefit-grid" style="margin-bottom:44px;">
+      <div class="benefit"><div class="dot"></div><div><h5>งานต่อเนื่องสม่ำเสมอ</h5><p>จับคู่กับครอบครัวที่ต้องการผู้ดูแลในพื้นที่ของคุณ</p></div></div>
+      <div class="benefit"><div class="dot"></div><div><h5>อบรมฟรีก่อนเริ่มงาน</h5><p>เข้าถึงคอร์สอบรมทั้ง 10 หลักสูตรโดยไม่มีค่าใช้จ่าย</p></div></div>
+      <div class="benefit"><div class="dot"></div><div><h5>ใบรับรองมาตรฐาน</h5><p>เพิ่มความน่าเชื่อถือให้กับโปรไฟล์ผู้ดูแลของคุณ</p></div></div>
+      <div class="benefit"><div class="dot"></div><div><h5>ทีมงานสนับสนุนตลอดงาน</h5><p>มีทีมประสานงานดูแลทั้งฝั่งผู้ดูแลและครอบครัว</p></div></div>
+    </div>
+
+    <form id="partnerForm">
+      <div class="row-2">
+        <div class="field"><label>ชื่อ-นามสกุล</label><input type="text" required></div>
+        <div class="field"><label>เบอร์โทรศัพท์</label><input type="tel" required></div>
+      </div>
+      <div class="row-2">
+        <div class="field"><label>ประสบการณ์การดูแล</label>
+          <select><option>ไม่มีประสบการณ์ (ต้องการอบรมใหม่)</option><option>น้อยกว่า 1 ปี</option><option>1–3 ปี</option><option>มากกว่า 3 ปี</option></select>
+        </div>
+        <div class="field"><label>พื้นที่ที่สะดวกรับงาน</label><input type="text" placeholder="เขต/จังหวัด" required></div>
+      </div>
+      <div class="field">
+        <label>ใบรับรอง/วุฒิที่มี <span class="hint">(ถ้ามี)</span></label>
+        <div class="chip-group" id="certChips">
+          <div class="chip" data-val="ผู้ช่วยพยาบาล">ผู้ช่วยพยาบาล</div>
+          <div class="chip" data-val="ผู้ช่วยดูแลผู้สูงอายุ">ผู้ช่วยดูแลผู้สูงอายุ (Caregiver)</div>
+          <div class="chip" data-val="กายภาพบำบัด">ผู้ช่วยกายภาพบำบัด</div>
+          <div class="chip" data-val="ยังไม่มี">ยังไม่มี ต้องการอบรม</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>อัปโหลดเอกสาร <span class="hint">(บัตรประชาชน, ใบผ่านงาน, ใบรับรอง)</span></label>
+        <div class="upload-box">ลากไฟล์มาวางที่นี่ หรือ <span style="color:var(--sage-deep); font-weight:600; text-decoration:underline;">เลือกไฟล์</span></div>
+      </div>
+      <div class="submit-row">
+        <button type="submit" class="btn btn-sage">ส่งใบสมัคร</button>
+      </div>
+      <div class="success-msg" id="partnerSuccess">✓ ได้รับใบสมัครแล้ว ทีมงานจะตรวจสอบและติดต่อกลับภายใน 3 วันทำการ</div>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-grid">
+    <div>
+      <div class="fbrand"><span class="brand-mark"></span><span style="font-family:'Noto Serif Thai',serif; font-weight:700; color:#fff; font-size:1.1rem;">CMCC</span></div>
+      <p style="max-width:320px;">แพลตฟอร์มอบรมและจับคู่ผู้ดูแลผู้สูงอายุและผู้ป่วยตามบ้าน เพื่อให้ทุกครอบครัวอุ่นใจในการดูแล</p>
+    </div>
+    <div>
+      <h4>เมนู</h4>
+      <p><a href="#" onclick="showTab('courses'); return false;">คอร์สเรียน</a></p>
+      <p><a href="#" onclick="showTab('find'); return false;">หาผู้ดูแล</a></p>
+      <p><a href="#" onclick="showTab('partner'); return false;">ร่วมงานกับเรา</a></p>
+    </div>
+    <div>
+      <h4>ติดต่อเรา</h4>
+      <p>โทร: 02-xxx-xxxx</p>
+      <p>Line: @cmcc</p>
+      <p>อีเมล: hello@cmcc.com</p>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">© 2026 CMCC — PROTOTYPE / DEMO BUILD</div>
+</footer>
+
+<script>
+  const courses = [
+    {t:"พื้นฐานการดูแลผู้สูงอายุ", d:"ความเข้าใจพื้นฐาน สุขภาพกาย-ใจ และการดูแลกิจวัตรประจำวัน", tags:["เริ่มต้น","3 ชม."]},
+    {t:"การดูแลผู้ป่วยติดเตียง", d:"เทคนิคการพลิกตัว ป้องกันแผลกดทับ และสุขอนามัยบนเตียง", tags:["ระดับกลาง","4 ชม."]},
+    {t:"การดูแลผู้ป่วยหลังผ่าตัด/พักฟื้น", d:"การดูแลแผล การเคลื่อนไหว และสัญญาณเตือนที่ต้องระวัง", tags:["ระดับกลาง","3.5 ชม."]},
+    {t:"การจัดการยาและอาการฉุกเฉินเบื้องต้น", d:"การจัดยาให้ถูกต้อง และการช่วยเหลือเบื้องต้นเมื่อเกิดเหตุฉุกเฉิน", tags:["สำคัญ","4 ชม."]},
+    {t:"โภชนาการสำหรับผู้สูงอายุและผู้ป่วย", d:"การจัดอาหารตามภาวะโรค และการป้อนอาหารอย่างปลอดภัย", tags:["เริ่มต้น","2.5 ชม."]},
+    {t:"การป้องกันการหกล้มและกายภาพเบื้องต้น", d:"การจัดสภาพแวดล้อม และท่าออกกำลังกายเพื่อฟื้นฟูร่างกาย", tags:["ระดับกลาง","3 ชม."]},
+    {t:"การดูแลผู้ป่วยสมองเสื่อม/อัลไซเมอร์", d:"การสื่อสารและรับมือพฤติกรรมที่เปลี่ยนแปลงอย่างเข้าใจ", tags:["เฉพาะทาง","4 ชม."]},
+    {t:"การสื่อสารและจิตวิทยาผู้สูงอายุ", d:"เทคนิคการฟังและสื่อสารเพื่อลดความเครียดของผู้ป่วยและครอบครัว", tags:["เริ่มต้น","2 ชม."]},
+    {t:"มาตรฐานความปลอดภัยและสุขอนามัย", d:"การป้องกันการติดเชื้อ และมาตรฐานความปลอดภัยในบ้าน", tags:["สำคัญ","2.5 ชม."]},
+    {t:"การเป็นผู้ดูแลมืออาชีพ", d:"จรรยาบรรณ การจัดการอารมณ์ตนเอง และเตรียมตัวสอบใบรับรอง", tags:["ปิดหลักสูตร","3 ชม."]},
+  ];
+
+  const list = document.getElementById('courseList');
+  courses.forEach((c,i)=>{
+    const row = document.createElement('div');
+    row.className = 'course-row';
+    row.innerHTML = `
+      <div class="course-num">${String(i+1).padStart(2,'0')}</div>
+      <div class="course-body">
+        <h4>${c.t}</h4>
+        <p>${c.d}</p>
+        <div class="course-tags">${c.tags.map(tg=>`<span class="tag">${tg}</span>`).join('')}</div>
+      </div>
+      <div class="course-cta">ดูรายละเอียด →</div>
+    `;
+    list.appendChild(row);
+  });
+
+  function showTab(id){
+    document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelector(`.tab-btn[data-tab="${id}"]`).classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=> showTab(btn.dataset.tab));
+  });
+
+  function setupChips(containerId){
+    document.querySelectorAll(`#${containerId} .chip`).forEach(chip=>{
+      chip.addEventListener('click', ()=> chip.classList.toggle('selected'));
+    });
+  }
+  setupChips('careTypeChips');
+  setupChips('certChips');
+
+  document.getElementById('findForm').addEventListener('submit', e=>{
+    e.preventDefault();
+    document.getElementById('findSuccess').classList.add('show');
+  });
+  document.getElementById('partnerForm').addEventListener('submit', e=>{
+    e.preventDefault();
+    document.getElementById('partnerSuccess').classList.add('show');
+  });
+</script>
+</body>
+</html>
