@@ -225,6 +225,12 @@
     padding:12px 16px; border-radius:12px; font-size:0.88rem; font-weight:500; margin-top:16px;
   }
   .success-msg.show{display:flex;}
+  .error-msg{
+    display:none; align-items:center; gap:10px; background:#F7DEDA; color:#9A3B2C;
+    padding:12px 16px; border-radius:12px; font-size:0.88rem; font-weight:500; margin-top:16px;
+  }
+  .error-msg.show{display:flex;}
+  button:disabled{opacity:0.6; cursor:not-allowed;}
 
   /* ---------- PARTNER ---------- */
   .benefit-grid{display:grid; gap:16px; margin-bottom:8px;}
@@ -361,8 +367,8 @@
       </div>
       <form id="findForm">
         <div class="row-2">
-          <div class="field"><label>ชื่อผู้ติดต่อ</label><input type="text" placeholder="เช่น คุณสมหญิง" required></div>
-          <div class="field"><label>เบอร์โทรศัพท์</label><input type="tel" placeholder="08x-xxx-xxxx" required></div>
+          <div class="field"><label>ชื่อผู้ติดต่อ</label><input type="text" id="findName" placeholder="เช่น คุณสมหญิง" required></div>
+          <div class="field"><label>เบอร์โทรศัพท์</label><input type="tel" id="findPhone" placeholder="08x-xxx-xxxx" required></div>
         </div>
         <div class="field">
           <label>ประเภทการดูแลที่ต้องการ</label>
@@ -375,18 +381,19 @@
           </div>
         </div>
         <div class="row-2">
-          <div class="field"><label>พื้นที่ให้บริการ</label><input type="text" placeholder="เขต/จังหวัด" required></div>
+          <div class="field"><label>พื้นที่ให้บริการ</label><input type="text" id="findArea" placeholder="เขต/จังหวัด" required></div>
           <div class="field"><label>รูปแบบเวลา</label>
-            <select><option>ประจำ (อยู่ประจำ)</option><option>รายวัน</option><option>เฉพาะกลางวัน</option><option>เฉพาะกลางคืน</option></select>
+            <select id="findSchedule"><option>ประจำ (อยู่ประจำ)</option><option>รายวัน</option><option>เฉพาะกลางวัน</option><option>เฉพาะกลางคืน</option></select>
           </div>
         </div>
         <div class="field"><label>รายละเอียดเพิ่มเติม <span class="hint">(อาการ, งบประมาณ, ข้อกังวล)</span></label>
-          <textarea rows="3" placeholder="เล่าให้เราฟังเพิ่มเติม..."></textarea>
+          <textarea rows="3" id="findDetails" placeholder="เล่าให้เราฟังเพิ่มเติม..."></textarea>
         </div>
         <div class="submit-row">
-          <button type="submit" class="btn btn-amber">ส่งคำขอหาผู้ดูแล</button>
+          <button type="submit" class="btn btn-amber" id="findSubmitBtn">ส่งคำขอหาผู้ดูแล</button>
         </div>
         <div class="success-msg" id="findSuccess">✓ รับคำขอแล้ว ทีมงานจะติดต่อกลับภายใน 24 ชั่วโมง</div>
+        <div class="error-msg" id="findError">⚠ ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่ หรือติดต่อเราทางโทรศัพท์</div>
       </form>
     </div>
   </div>
@@ -410,14 +417,14 @@
 
     <form id="partnerForm">
       <div class="row-2">
-        <div class="field"><label>ชื่อ-นามสกุล</label><input type="text" required></div>
-        <div class="field"><label>เบอร์โทรศัพท์</label><input type="tel" required></div>
+        <div class="field"><label>ชื่อ-นามสกุล</label><input type="text" id="partnerName" required></div>
+        <div class="field"><label>เบอร์โทรศัพท์</label><input type="tel" id="partnerPhone" required></div>
       </div>
       <div class="row-2">
         <div class="field"><label>ประสบการณ์การดูแล</label>
-          <select><option>ไม่มีประสบการณ์ (ต้องการอบรมใหม่)</option><option>น้อยกว่า 1 ปี</option><option>1–3 ปี</option><option>มากกว่า 3 ปี</option></select>
+          <select id="partnerExperience"><option>ไม่มีประสบการณ์ (ต้องการอบรมใหม่)</option><option>น้อยกว่า 1 ปี</option><option>1–3 ปี</option><option>มากกว่า 3 ปี</option></select>
         </div>
-        <div class="field"><label>พื้นที่ที่สะดวกรับงาน</label><input type="text" placeholder="เขต/จังหวัด" required></div>
+        <div class="field"><label>พื้นที่ที่สะดวกรับงาน</label><input type="text" id="partnerArea" placeholder="เขต/จังหวัด" required></div>
       </div>
       <div class="field">
         <label>ใบรับรอง/วุฒิที่มี <span class="hint">(ถ้ามี)</span></label>
@@ -430,12 +437,13 @@
       </div>
       <div class="field">
         <label>อัปโหลดเอกสาร <span class="hint">(บัตรประชาชน, ใบผ่านงาน, ใบรับรอง)</span></label>
-        <div class="upload-box">ลากไฟล์มาวางที่นี่ หรือ <span style="color:var(--sage-deep); font-weight:600; text-decoration:underline;">เลือกไฟล์</span></div>
+        <div class="upload-box">ลากไฟล์มาวางที่นี่ หรือ <span style="color:var(--sage-deep); font-weight:600; text-decoration:underline;">เลือกไฟล์</span><br><span style="font-size:0.76rem;">(หมายเหตุ: การอัปโหลดไฟล์จริงต้องเพิ่มระบบเก็บไฟล์แยก เช่น Google Drive — ส่วนนี้ยังเป็นเพียงตัวอย่างหน้าตา)</span></div>
       </div>
       <div class="submit-row">
-        <button type="submit" class="btn btn-sage">ส่งใบสมัคร</button>
+        <button type="submit" class="btn btn-sage" id="partnerSubmitBtn">ส่งใบสมัคร</button>
       </div>
       <div class="success-msg" id="partnerSuccess">✓ ได้รับใบสมัครแล้ว ทีมงานจะตรวจสอบและติดต่อกลับภายใน 3 วันทำการ</div>
+      <div class="error-msg" id="partnerError">⚠ ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่ หรือติดต่อเราทางโทรศัพท์</div>
     </form>
   </div>
 </section>
@@ -511,13 +519,75 @@
   setupChips('careTypeChips');
   setupChips('certChips');
 
+  // ===== Google Apps Script Web App URL =====
+  // แทนที่ค่านี้ด้วย URL ที่ได้จากการ Deploy Apps Script (ดูวิธีทำในคำแนะนำที่แชทให้)
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzWQfqjl-lCdMTMWUmWGn9DirlGd58-3MQNPdv-1wX9qEyVh0K22RgoMIr_h3eFXK79/exec";
+
+  function getSelectedChips(containerId){
+    return Array.from(document.querySelectorAll(`#${containerId} .chip.selected`)).map(c => c.dataset.val);
+  }
+
+  async function submitToSheet(payload, successEl, errorEl, btn, originalLabel){
+    errorEl.classList.remove('show');
+    successEl.classList.remove('show');
+    btn.disabled = true;
+    btn.textContent = "กำลังส่ง...";
+    try{
+      // ใช้ text/plain + no-cors เพื่อเลี่ยงปัญหา CORS preflight กับ Apps Script
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      });
+      // โหมด no-cors อ่าน response ไม่ได้ แต่ถ้า fetch ไม่ throw ก็ถือว่าส่งสำเร็จ
+      successEl.classList.add('show');
+    }catch(err){
+      console.error(err);
+      errorEl.classList.add('show');
+    }finally{
+      btn.disabled = false;
+      btn.textContent = originalLabel;
+    }
+  }
+
   document.getElementById('findForm').addEventListener('submit', e=>{
     e.preventDefault();
-    document.getElementById('findSuccess').classList.add('show');
+    const payload = {
+      formType: "find",
+      name: document.getElementById('findName').value,
+      phone: document.getElementById('findPhone').value,
+      careTypes: getSelectedChips('careTypeChips'),
+      area: document.getElementById('findArea').value,
+      schedule: document.getElementById('findSchedule').value,
+      details: document.getElementById('findDetails').value
+    };
+    submitToSheet(
+      payload,
+      document.getElementById('findSuccess'),
+      document.getElementById('findError'),
+      document.getElementById('findSubmitBtn'),
+      "ส่งคำขอหาผู้ดูแล"
+    );
   });
+
   document.getElementById('partnerForm').addEventListener('submit', e=>{
     e.preventDefault();
-    document.getElementById('partnerSuccess').classList.add('show');
+    const payload = {
+      formType: "partner",
+      name: document.getElementById('partnerName').value,
+      phone: document.getElementById('partnerPhone').value,
+      experience: document.getElementById('partnerExperience').value,
+      area: document.getElementById('partnerArea').value,
+      certs: getSelectedChips('certChips')
+    };
+    submitToSheet(
+      payload,
+      document.getElementById('partnerSuccess'),
+      document.getElementById('partnerError'),
+      document.getElementById('partnerSubmitBtn'),
+      "ส่งใบสมัคร"
+    );
   });
 </script>
 </body>
