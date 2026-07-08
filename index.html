@@ -288,7 +288,6 @@
   </div>
 </header>
 
-<!-- ============ HOME ============ -->
 <section id="home" class="active">
   <div class="hero">
     <div class="ripples">
@@ -355,7 +354,6 @@
   </div>
 </section>
 
-<!-- ============ COURSES ============ -->
 <section id="courses">
   <div class="wrap section-pad">
     <div class="section-head">
@@ -367,7 +365,6 @@
   </div>
 </section>
 
-<!-- ============ FIND CAREGIVER ============ -->
 <section id="find">
   <div class="wrap section-pad">
     <div class="section-head">
@@ -417,7 +414,6 @@
   </div>
 </section>
 
-<!-- ============ PARTNER ============ -->
 <section id="partner">
   <div class="wrap section-pad">
     <div class="section-head">
@@ -453,7 +449,7 @@
           <div class="chip" data-val="ยังไม่มี">ยังไม่มี ต้องการอบรม</div>
         </div>
       </div>
-    <div class="field">
+      <div class="field">
         <label>อัปโหลดเอกสาร <span class="hint">(บัตรประชาชน, ใบผ่านงาน, ใบรับรอง)</span></label>
         <div class="upload-box" id="uploadBox">
           <input type="file" id="partnerFile" accept=".pdf,image/*" style="display:none;">
@@ -471,15 +467,22 @@
     </form>
   </div>
 </section>
+
 <div id="courseModal" class="modal-overlay">
-  <div class="modal-content">
+  <div class="modal-content" style="max-width: 600px;">
     <button class="modal-close" onclick="closeModal()">×</button>
-    <h3 id="modalTitle" style="margin-bottom: 10px;"></h3>
+    <h3 id="modalTitle" style="margin-bottom: 14px;"></h3>
+    
+    <div id="videoWrapper" style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; margin-bottom:18px; border-radius:12px; background:#000; display:none;">
+      <iframe id="modalVideo" style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    
     <p id="modalDesc" style="color: var(--ink-soft); margin-bottom: 20px;"></p>
     <div id="modalTags" class="course-tags" style="margin-bottom: 24px;"></div>
     <button class="btn btn-sage" style="width: 100%; justify-content: center;" onclick="closeModal()">ปิดหน้าต่าง</button>
   </div>
 </div>
+
 <footer>
   <div class="wrap footer-grid">
     <div>
@@ -503,7 +506,7 @@
 </footer>
 
 <script>
- const courses = [
+  const courses = [
     {t:"พื้นฐานการดูแลผู้สูงอายุ", d:"ความเข้าใจพื้นฐาน สุขภาพกาย-ใจ และการดูแลกิจวัตรประจำวัน", tags:["เริ่มต้น","7 นาที."], vid: "Foj4V713MjI"},
     {t:"การดูแลผู้ป่วยติดเตียง", d:"เทคนิคการพลิกตัว ป้องกันแผลกดทับ และสุขอนามัยบนเตียง", tags:["ระดับกลาง","4 นาที."], vid: "EwNWLLM3eUg"},
     {t:"การดูแลผู้ป่วยหลังผ่าตัด/พักฟื้น", d:"การดูแลแผล การเคลื่อนไหว และสัญญาณเตือนที่ต้องระวัง", tags:["ระดับกลาง","13 นาที."], vid: "Ig3GroOp35A"},
@@ -516,7 +519,7 @@
     {t:"การเป็นผู้ดูแลมืออาชีพ", d:"จรรยาบรรณ การจัดการอารมณ์ตนเอง และเตรียมตัวสอบใบรับรอง", tags:["ปิดหลักสูตร","3 ชม."], vid: ""},
   ];
 
-const list = document.getElementById('courseList');
+  const list = document.getElementById('courseList');
   courses.forEach((c,i)=>{
     const row = document.createElement('div');
     row.className = 'course-row';
@@ -532,18 +535,32 @@ const list = document.getElementById('courseList');
     list.appendChild(row);
   });
 
-  // ฟังก์ชันควบคุมการเปิดปิด Modal
+  // ฟังก์ชันควบคุมการเปิดปิด Modal และระบบวิดีโอ
   function openModal(index) {
     const c = courses[index];
     document.getElementById('modalTitle').innerText = c.t;
-    document.getElementById('modalDesc').innerText = c.d + " (ในอนาคตคุณสามารถเพิ่มรายละเอียด เช่น ข้อมูลวิทยากร หรือวิดีโอตัวอย่างของคอร์สนี้ได้ที่นี่)";
+    document.getElementById('modalDesc').innerText = c.d;
     document.getElementById('modalTags').innerHTML = c.tags.map(tg=>`<span class="tag">${tg}</span>`).join('');
+    
+    const videoWrapper = document.getElementById('videoWrapper');
+    const modalVideo = document.getElementById('modalVideo');
+    
+    if (c.vid && c.vid.trim() !== "") {
+      modalVideo.src = `https://www.youtube.com/embed/${c.vid}?autoplay=1`;
+      videoWrapper.style.display = 'block';
+    } else {
+      modalVideo.src = '';
+      videoWrapper.style.display = 'none';
+    }
+    
     document.getElementById('courseModal').classList.add('show');
   }
 
   function closeModal() {
     document.getElementById('courseModal').classList.remove('show');
+    document.getElementById('modalVideo').src = ''; // สั่งหยุดวิดีโอเมื่อปิดหน้าต่าง
   }
+
   function showTab(id){
     document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
@@ -551,6 +568,7 @@ const list = document.getElementById('courseList');
     document.querySelector(`.tab-btn[data-tab="${id}"]`).classList.add('active');
     window.scrollTo({top:0, behavior:'smooth'});
   }
+  
   document.querySelectorAll('.tab-btn').forEach(btn=>{
     btn.addEventListener('click', ()=> showTab(btn.dataset.tab));
   });
@@ -564,7 +582,6 @@ const list = document.getElementById('courseList');
   setupChips('certChips');
 
   // ===== Google Apps Script Web App URL =====
-  // แทนที่ค่านี้ด้วย URL ที่ได้จากการ Deploy Apps Script (ดูวิธีทำในคำแนะนำที่แชทให้)
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzWQfqjl-lCdMTMWUmWGn9DirlGd58-3MQNPdv-1wX9qEyVh0K22RgoMIr_h3eFXK79/exec";
 
   function getSelectedChips(containerId){
@@ -577,14 +594,12 @@ const list = document.getElementById('courseList');
     btn.disabled = true;
     btn.textContent = "กำลังส่ง...";
     try{
-      // ใช้ text/plain + no-cors เพื่อเลี่ยงปัญหา CORS preflight กับ Apps Script
       await fetch(SCRIPT_URL, {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(payload)
       });
-      // โหมด no-cors อ่าน response ไม่ได้ แต่ถ้า fetch ไม่ throw ก็ถือว่าส่งสำเร็จ
       successEl.classList.add('show');
     }catch(err){
       console.error(err);
@@ -596,15 +611,18 @@ const list = document.getElementById('courseList');
   }
 
   document.getElementById('findForm').addEventListener('submit', e=>{
-    e.preventDefault();const selectedCareTypes = getSelectedChips('careTypeChips');
+    e.preventDefault();
+    const selectedCareTypes = getSelectedChips('careTypeChips');
     if (selectedCareTypes.length === 0) {
       alert('กรุณาเลือก "ประเภทการดูแลที่ต้องการ" อย่างน้อย 1 รายการ');
       return;
+    }
+
     const payload = {
       formType: "find",
       name: document.getElementById('findName').value,
       phone: document.getElementById('findPhone').value,
-      careTypes: getSelectedChips('careTypeChips'),
+      careTypes: selectedCareTypes,
       area: document.getElementById('findArea').value,
       schedule: document.getElementById('findSchedule').value,
       details: document.getElementById('findDetails').value
@@ -619,17 +637,20 @@ const list = document.getElementById('courseList');
   });
 
   document.getElementById('partnerForm').addEventListener('submit', e=>{
-    e.preventDefault();const selectedCerts = getSelectedChips('certChips');
+    e.preventDefault();
+    const selectedCerts = getSelectedChips('certChips');
     if (selectedCerts.length === 0) {
       alert('กรุณาเลือก "ใบรับรอง/วุฒิที่มี" (หากไม่มีให้เลือก "ยังไม่มี")');
-      return; // หยุดการทำงาน ไม่ส่งฟอร์ม
+      return; 
+    }
+
     const payload = {
       formType: "partner",
       name: document.getElementById('partnerName').value,
       phone: document.getElementById('partnerPhone').value,
       experience: document.getElementById('partnerExperience').value,
       area: document.getElementById('partnerArea').value,
-      certs: getSelectedChips('certChips')
+      certs: selectedCerts
     };
     submitToSheet(
       payload,
@@ -639,7 +660,8 @@ const list = document.getElementById('courseList');
       "ส่งใบสมัคร"
     );
   });
-document.getElementById('partnerFile').addEventListener('change', function() {
+
+  document.getElementById('partnerFile').addEventListener('change', function() {
     const fileNameDisplay = document.getElementById('fileNameDisplay');
     if (this.files && this.files[0]) {
       fileNameDisplay.textContent = 'ไฟล์ที่เลือก: ' + this.files[0].name;
