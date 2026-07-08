@@ -278,16 +278,16 @@
 <header>
   <div class="nav-inner">
     <div class="brand"><span class="brand-mark"></span>CMCC</div>
-    <nav class="tabs">
+<nav class="tabs">
       <button class="tab-btn active" data-tab="home">หน้าแรก</button>
       <button class="tab-btn" data-tab="courses">คอร์สเรียน</button>
       <button class="tab-btn" data-tab="find">หาผู้ดูแล</button>
       <button class="tab-btn" data-tab="partner">ร่วมงานกับเรา</button>
+      <button class="tab-btn" data-tab="login" id="navLoginBtn">เข้าสู่ระบบ</button>
     </nav>
     <a href="#" class="btn btn-amber nav-cta" onclick="showTab('find'); return false;">ต้องการผู้ดูแล →</a>
   </div>
 </header>
-
 <section id="home" class="active">
   <div class="hero">
     <div class="ripples">
@@ -482,7 +482,35 @@
     <button class="btn btn-sage" style="width: 100%; justify-content: center;" onclick="closeModal()">ปิดหน้าต่าง</button>
   </div>
 </div>
+<section id="login">
+  <div class="wrap section-pad" style="max-width: 500px; margin: 0 auto;">
+    <div class="section-head" style="text-align: center;">
+      <h2>เข้าสู่ระบบสำหรับพาร์ตเนอร์</h2>
+    </div>
+    
+    <form id="loginForm" style="margin-bottom: 20px;">
+      <div class="field">
+        <label>อีเมล</label>
+        <input type="email" id="loginEmail" required placeholder="email@example.com">
+      </div>
+      <div class="field">
+        <label>รหัสผ่าน</label>
+        <input type="password" id="loginPassword" required placeholder="********">
+      </div>
+      <div class="submit-row" style="justify-content: center;">
+        <button type="submit" class="btn btn-sage" id="loginSubmitBtn" style="width: 100%; justify-content: center;">เข้าสู่ระบบ</button>
+      </div>
+      <div class="error-msg" id="loginError" style="justify-content: center;">⚠ อีเมลหรือรหัสผ่านไม่ถูกต้อง</div>
+    </form>
 
+    <div id="userDashboard" style="display: none; text-align: center; background: #fff; padding: 32px; border-radius: var(--radius); border: 1px solid var(--line);">
+      <div class="icon-blob" style="margin: 0 auto 16px; background: var(--sage); color: #fff; width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">✓</div>
+      <h3 style="margin-bottom: 10px;">ยินดีต้อนรับเข้าสู่ระบบ!</h3>
+      <p style="color: var(--ink-soft); margin-bottom: 20px;">คุณเข้าสู่ระบบด้วยอีเมล: <br><strong id="userEmailDisplay"></strong></p>
+      <button class="btn btn-outline" id="logoutBtn">ออกจากระบบ</button>
+    </div>
+  </div>
+</section>
 <footer>
   <div class="wrap footer-grid">
     <div>
@@ -668,6 +696,92 @@
       fileNameDisplay.style.display = 'block';
     } else {
       fileNameDisplay.style.display = 'none';
+    }
+  });
+</script>
+<script type="module">
+  // 1. นำเข้าคำสั่งของ Firebase จากอินเทอร์เน็ต
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  // 2. โค้ด Config ของคุณ (อัปเดตข้อมูลจริงแล้ว)
+  const firebaseConfig = {
+    apiKey: "AIzaSyAzFD4Yl_VbnH91yYnHtsIqzhjPa1tbRHw",
+    authDomain: "cmcc-web-auth.firebaseapp.com",
+    projectId: "cmcc-web-auth",
+    storageBucket: "cmcc-web-auth.firebasestorage.app",
+    messagingSenderId: "636869110080",
+    appId: "1:636869110080:web:ae569c4f3ca5cec0f032a5",
+    measurementId: "G-7X15EL341W"
+  };
+
+  // 3. เริ่มต้นระบบ Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  // ตัวแปรเชื่อมต่อกับหน้าเว็บ (HTML Elements)
+  const loginForm = document.getElementById('loginForm');
+  const loginError = document.getElementById('loginError');
+  const loginSubmitBtn = document.getElementById('loginSubmitBtn');
+  const userDashboard = document.getElementById('userDashboard');
+  const userEmailDisplay = document.getElementById('userEmailDisplay');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const navLoginBtn = document.getElementById('navLoginBtn');
+
+  // 4. คำสั่งเมื่อกดปุ่ม "เข้าสู่ระบบ"
+  if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      loginError.classList.remove('show');
+      loginSubmitBtn.textContent = "กำลังตรวจสอบ...";
+      loginSubmitBtn.disabled = true;
+
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+
+      // ยิงคำสั่งไปถาม Firebase
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          // ล็อกอินสำเร็จ
+          loginForm.reset(); 
+        })
+        .catch((error) => {
+          // ล็อกอินไม่ผ่าน (รหัสผิด / ไม่มีอีเมลนี้)
+          console.error(error.code, error.message);
+          loginError.classList.add('show');
+          loginSubmitBtn.textContent = "เข้าสู่ระบบ";
+          loginSubmitBtn.disabled = false;
+        });
+    });
+  }
+
+  // 5. คำสั่งกดปุ่ม "ออกจากระบบ"
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      signOut(auth);
+    });
+  }
+
+  // 6. ตัวดักจับสถานะตลอดเวลา (เช็กว่ามีคนล็อกอินค้างไว้ไหม)
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // มีคนล็อกอินอยู่: ซ่อนฟอร์มล็อกอิน โชว์หน้า Dashboard เปลี่ยนปุ่มเมนู
+      if(loginForm) loginForm.style.display = 'none';
+      if(userDashboard) userDashboard.style.display = 'block';
+      if(userEmailDisplay) userEmailDisplay.textContent = user.email;
+      if(navLoginBtn) {
+        navLoginBtn.textContent = "บัญชีของฉัน"; // เปลี่ยนชื่อแท็บในเมนู
+        navLoginBtn.classList.add('active'); 
+      }
+    } else {
+      // ไม่มีคนล็อกอิน: โชว์ฟอร์มล็อกอิน ซ่อน Dashboard เปลี่ยนปุ่มเมนูกลับ
+      if(loginForm) loginForm.style.display = 'block';
+      if(userDashboard) userDashboard.style.display = 'none';
+      if(navLoginBtn) navLoginBtn.textContent = "เข้าสู่ระบบ";
+      if(loginSubmitBtn) {
+        loginSubmitBtn.textContent = "เข้าสู่ระบบ";
+        loginSubmitBtn.disabled = false;
+      }
     }
   });
 </script>
